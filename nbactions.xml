@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+    <action>
+        <actionName></actionName>
+        <packagings>
+            <packaging>*</packaging>
+        </packagings>
+        <goals>
+            <goal>test</goal>
+        </goals>
+        <properties>
+            <xxx></xxx>
+        </properties>
+    </action>
+        <action>
+        <actionName>test</actionName>
+        <packagings>
+            <packaging>jar</packaging>
+        </packagings>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:3.0.0:exec</goal>
+        </goals>
+        <properties>
+            <exec.vmArgs>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
+            <exec.args>-Dserver.port=8082 -Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath gamesis.mail.GamesisMailServer</exec.args>
+            <exec.executable>java</exec.executable>
+            <jpda.listen>true</jpda.listen>
+            <Env.KEYSTORE_URL>/Users/eriknijs/Documents/src/gamesis/docker/secret/gamesis.jks</Env.KEYSTORE_URL>
+            <Env.KEYSTORE_PASSWORD>gamesis</Env.KEYSTORE_PASSWORD>
+            <Env.KEYSTORE_ALIAS>gamesis</Env.KEYSTORE_ALIAS>
+            <Env.ARTEMIS_URL>tcp://localhost:61616</Env.ARTEMIS_URL>
+            <Env.ARTEMIS_USER>artemis</Env.ARTEMIS_USER>
+            <Env.ARTEMIS_PASSWORD>artemis</Env.ARTEMIS_PASSWORD>
+        </properties>
+    </action>
+</actions>

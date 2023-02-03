@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     
     <groupId>gamesis</groupId>
-    <artifactId>gamesis-mail-model</artifactId>
+    <artifactId>gamesis-schemas</artifactId>
     <version>1.0</version>
 
-    <name>gamesis-mail-model</name>
+    <name>gamesis-schemas</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,6 +19,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>6.0.4</version>
+            <!--<scope>test</scope>-->
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -30,6 +31,13 @@
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
             <version>2.2.8</version>
+            <!--<scope>test</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-artemis</artifactId>
+            <version>3.0.2</version>
+            <!--<scope>test</scope>-->
         </dependency>
     </dependencies>
     <build>
@@ -41,28 +49,28 @@
                 <version>4.3.11</version>
                 <executions>
                     <execution>
-                        <phase>generate-test-sources</phase>
+                        <id>generateSupplier</id>
+                        <phase>process-resources</phase>
                         <goals>
                             <goal>asyncapi-generation</goal>
                         </goals>
                         <configuration>
+                            <generatedSourcesFolder>generated-test-sources</generatedSourcesFolder>
+                            <overwriteModel>true</overwriteModel>
                             <specFiles>
                                 <specFile>
-                                    <filePath>publisher.yaml</filePath>
+                                    <filePath>src/main/resources/mail.asyncapi.yaml</filePath>
                                     <supplier>
                                         <ids>requestMail</ids>
-                                        <apiPackage>gamesis.mail.supplier</apiPackage>
-                                        <modelPackage>gamesis.mail.supplier.model</modelPackage>
+                                        <apiPackage>gamesis.mail.client</apiPackage>
+                                        <modelPackage>gamesis.mail.model</modelPackage>
                                     </supplier>
-                                </specFile>
-<!--                                <specFile>
-                                    <filePath>subscriber.yaml</filePath>
                                     <consumer>
                                         <ids>onMailRequest</ids>
-                                        <apiPackage>gamesis.mail.consumer</apiPackage>
-                                        <modelPackage>gamesis.mail.consumer.model</modelPackage>
+                                        <apiPackage>gamesis.mail.server</apiPackage>
+                                        <modelPackage>gamesis.mail.model</modelPackage>
                                     </consumer>
-                                </specFile>-->
+                                </specFile>
                             </specFiles>
                         </configuration>
                     </execution>
