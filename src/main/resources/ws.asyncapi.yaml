@@ -1,0 +1,89 @@
+asyncapi: 2.5.0
+id: uri:gamesis-events
+info:
+    title: Gamesis Websocket API
+    version: "${version}"
+    description: This server sends out events in case of story updates
+    contact:
+        email: info@gamesis.nl
+        name: Erik Nijs
+        url: https://gamesis.nl
+    license:
+        name: Apache-2.0
+        url: https://www.apache.org/licenses/LICENSE-2.0
+tags: []
+servers:
+    default:
+        url: localhost
+        protocol: ws
+channels:
+    events/topic/{campaign}:
+        parameters:
+            campaign:
+                schema:
+                    type: string
+        subscribe:
+            description: Status messages for everyone in the campaign
+            operationId: onCampaignUpdate
+            message:
+                oneOf:
+                    - $ref: '#/components/messages/campaign'
+                    - $ref: '#/components/messages/character'
+    events/topic/{campaign}/gm:
+        parameters:
+            campaign:
+                schema:
+                    type: string
+        subscribe:
+            description: updates only targeted gamemasters
+            operationId: onGameMasterUpdate
+            message:
+                $ref: '#/components/messages/campaign'
+    events/topic/{campaign}/pc/{character}:
+        parameters:
+            campaign:
+                schema:
+                    type: string
+            character:
+                schema:
+                    type: string
+        subscribe:
+            description: Status messages for specific characters in the campaign
+            operationId: onCharacterUpdate
+            message:
+                $ref: '#/components/messages/character'
+components:
+    messages:
+        campaign:
+            contentType: application/json
+            payload:
+                $ref: '#/components/schemas/campaign'
+
+        character:
+            contentType: application/json
+            payload:
+                $ref: '#/components/schemas/character'
+    schemas:
+        campaign:
+            type: object
+            additionalProperties: false
+            properties:
+                id:
+                    type: string
+                type:
+                    type: string
+                    enum: [update, delete]
+                count:
+                    type: number
+        character:
+            type: object
+            additionalProperties: false
+            properties:
+                name:
+                    type: string
+                type:
+                    type: string
+                    enum: [status]
+                state:
+                    type: string
+                    enum: [action, message, idle]
