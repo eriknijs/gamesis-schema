@@ -52,7 +52,7 @@
                             <overwriteModel>true</overwriteModel>
                             <specFiles>
                                 <specFile>
-                                    <filePath>${project.build.directory}/classes/ws.asyncapi.yaml</filePath>
+                                    <filePath>${project.build.directory}/classes/mail.asyncapi.yaml</filePath>
                                     <supplier>
                                         <ids>onCampaignUpdate</ids>
                                         <apiPackage>gamesis.websocket.messaging</apiPackage>
