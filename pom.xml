@@ -20,52 +20,7 @@
             </resource>
         </resources>
         <plugins>
-<!--            <plugin>
-                <groupId>de.dentrassi.maven</groupId>
-                <artifactId>asyncapi</artifactId>
-                <version>0.0.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <definitionFile>${project.basedir}/src/test/resources/asyncapi.yaml</definitionFile>
-                </configuration>
-            </plugin>-->
-            
             <plugin>
-                <groupId>com.sngular</groupId>
-                <artifactId>scs-multiapi-maven-plugin</artifactId>
-                <version>4.3.13</version>
-                <executions>
-                    <execution>
-                        <id>generateSupplier</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>asyncapi-generation</goal>
-                        </goals>
-                        <configuration>
-                            <generatedSourcesFolder>generated-test-sources</generatedSourcesFolder>
-                            <overwriteModel>true</overwriteModel>
-                            <specFiles>
-                                <specFile>
-                                    <filePath>${project.build.directory}/classes/mail.asyncapi.yaml</filePath>
-                                    <supplier>
-                                        <ids>onCampaignUpdate</ids>
-                                        <apiPackage>gamesis.websocket.messaging</apiPackage>
-                                        <modelPackage>gamesis.websocket.model</modelPackage>
-                                    </supplier>
-                                </specFile>
-                            </specFiles>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            
-<!--            <plugin>
                 <groupId>io.apicurio</groupId>
                 <artifactId>apicurio-registry-maven-plugin</artifactId>
                 <version>2.4.1.Final</version>
@@ -82,14 +37,14 @@
                                     <groupId>${groupId}</groupId> 
                                     <artifactId>${artifactId}</artifactId>
                                     <version>${project.version}</version>
-                                    <file>${project.build.directory}/classes/asyncapi.yaml</file>
+                                    <file>${project.build.directory}/classes/mail.asyncapi.yaml</file>
                                     <ifExists>RETURN_OR_UPDATE</ifExists>
                                 </artifact>
                             </artifacts>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
         </plugins>
     </build>
 </project>
