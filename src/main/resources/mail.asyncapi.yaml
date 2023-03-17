@@ -1,5 +1,5 @@
 asyncapi: 2.5.0
-id: uri:${projectId}
+id: uri:gamesis-mail
 info:
     title: Gamesis Mail Service
     version: "${version}"

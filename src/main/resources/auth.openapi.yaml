@@ -1,0 +1,197 @@
+openapi: 3.0.1
+info:
+  title: Gamesis Auth API
+  description: Gamesis authentication and autorization service
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: "${version}"
+paths:
+  /players:
+    get:
+      description: retrieve all users for the campaign
+      tags:
+        - players
+      operationId: players
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Player'
+    post:
+      tags:
+        - players
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registration'
+        required: true
+      responses:
+        202:
+          description: Accepted
+  /players/{player}:
+    get:
+      description: Retrieve player details by id
+      tags:
+        - players
+      operationId: getPlayerById
+      parameters:
+        - name: player
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+    delete:
+      description: Removes a player from the campaign. The player (user credentials) are NOT removed
+      tags:
+        - players
+      operationId: removePlayer
+      parameters:
+        - name: player
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+        503:
+          description: Service Unavailable
+  /invites:
+    get:
+      description: Retrieves a list of all (pending) invites for the campaign
+      tags:
+        - invites
+      operationId: invites
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Invite'
+    post:
+      description: Creates a new invite
+      tags:
+        - invites
+      operationId: invite
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Invite'
+        required: true
+      responses:
+        201:
+          description: The invite has been created
+  /invites/{invite}:
+    delete:
+      description: >-
+        Removes (and thus invalidates) the invite. Users who have received 
+        the invite can no longer register with the give code
+      tags:
+        - invites
+      operationId: revoke
+      parameters:
+        - name: invite
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+  /campaigns/{name}:
+    post:
+      description: Creates a new campaign and authorizes the current user/player for it
+      tags:
+        - campaigns
+      operationId: create
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+    get:
+      description: Check if there is a campaign with the given name
+      tags:
+        - campaigns
+      operationId: check
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK, campaign exists
+
+components:
+  schemas:
+    Registration:
+      type: object
+      required:
+        - campaign
+        - code
+      properties:
+        campaign:
+          type: string
+          description: The name of the campaign to register into
+          minLength: 4
+          maxLength: 64
+        code:
+          type: string
+          description: A code which can be exchanged for an active invite
+    Player:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        gameMaster:
+          type: boolean
+          description: Indicates if this player is a gamemaster in the campaign
+    Invite:
+      type: object
+      required:
+        - code
+        - email
+        - expirationDate
+      properties:
+        code:
+          type: string
+        email:
+          type: string
+          format: email
+          description: The mail address for the recipient of the invite
+        expirationDate:
+          type: string
+          format: date-time
+          description: the date time until when the invite can be used to register to the campaign
+        gameMaster:
+          type: boolean
+

@@ -1,5 +1,5 @@
 asyncapi: 2.5.0
-id: uri:gamesis-events
+id: uri:gamesis-events-ws
 info:
     title: Gamesis Websocket API
     version: "${version}"
@@ -23,22 +23,30 @@ channels:
                 schema:
                     type: string
         subscribe:
-            description: Status messages for everyone in the campaign
+            description: Campaign event updates for everyone
             operationId: onCampaignUpdate
             message:
-                oneOf:
-                    - $ref: '#/components/messages/campaign'
-                    - $ref: '#/components/messages/character'
+                $ref: '#/components/messages/event'
+    events/topic/{campaign}/state:
+        parameters:
+            campaign:
+                schema:
+                    type: string
+        subscribe:
+            description: Status messages for everyone in the campaign
+            operationId: statusUpdate
+            message:
+                $ref: '#/components/messages/character'
     events/topic/{campaign}/gm:
         parameters:
             campaign:
                 schema:
                     type: string
         subscribe:
-            description: updates only targeted gamemasters
+            description: Campaign event updates only targeted gamemasters
             operationId: onGameMasterUpdate
             message:
-                $ref: '#/components/messages/campaign'
+                $ref: '#/components/messages/event'
     events/topic/{campaign}/pc/{character}:
         parameters:
             campaign:
@@ -51,20 +59,114 @@ channels:
             description: Status messages for specific characters in the campaign
             operationId: onCharacterUpdate
             message:
-                $ref: '#/components/messages/character'
+                $ref: '#/components/messages/event'
 components:
     messages:
-        campaign:
+        event:
             contentType: application/json
             payload:
-                $ref: '#/components/schemas/campaign'
+                $ref: '#/components/schemas/EventUpdate'
 
         character:
             contentType: application/json
             payload:
-                $ref: '#/components/schemas/character'
+                $ref: '#/components/schemas/StateUpdate'
     schemas:
-        campaign:
+        Event:
+            type: object
+            additionalProperties: false
+            discriminator: type
+            properties:
+                id:
+                    type: string
+                player:
+                    type: string
+                created:
+                    type: number
+                updated:
+                    type: number
+                type:
+                    type: string
+            required:
+                - id
+                - type
+                - player
+                - created
+                
+        Message:
+            description: A spoken message between characters
+            allOf:
+            - $ref: '#/components/schemas/Event'
+            - type: object
+              additionalProperties: false
+              properties:
+                type:
+                    const: "Message"
+                text:
+                    type: string
+                    description: The actual message the character is sending
+                character:
+                    type: string
+                    description: The character who is saying this
+                characters:
+                    type: array
+                    description: The characters to who the message is being said. Or empty in case it is said to all.
+                    items:
+                        type: string
+              required:
+                - text
+                - character
+                
+        Action:
+            description: Describes the actions taken by a character
+            allOf:
+            - $ref: '#/components/schemas/Event'
+            - type: object
+              properties:
+                type:
+                    const: "Action"
+                character:
+                    type: string
+                    description: The character who takes the action
+                text:
+                    type: array
+                    items:
+                        type: object
+                        additionalProperties: false
+                        properties:
+                            text:
+                                type: string
+                            gameMaster:
+                                type: boolean
+                            timestamp:
+                                type: number
+                        required:
+                            - text
+                            - timestamp
+                rolls:
+                    type: array
+                    items:
+                        type: object
+                        additionalProperties: false
+                        properties:
+                            formula:
+                                type: string
+                            description:
+                                type: string
+                            timestamp:
+                                type: number
+                            result:
+                                type: number
+                        required:
+                            - formula
+                            - description
+                            - timestamp
+                            - result
+              required:
+                - character
+                
+            
+        EventUpdate:
             type: object
             additionalProperties: false
             properties:
@@ -75,15 +177,16 @@ components:
                     enum: [update, delete]
                 count:
                     type: number
-        character:
+                data:
+                    $ref: '#/components/schemas/Event'
+
+
+        StateUpdate:
             type: object
             additionalProperties: false
             properties:
                 name:
                     type: string
-                type:
-                    type: string
-                    enum: [status]
                 state:
                     type: string
                     enum: [action, message, idle]

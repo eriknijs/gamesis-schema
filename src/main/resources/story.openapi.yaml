@@ -1,0 +1,897 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: "${version}"
+paths:
+  /event/{id}:
+    get:
+      tags:
+        - story
+      operationId: get
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Action'
+                  - $ref: '#/components/schemas/Comment'
+                  - $ref: '#/components/schemas/Image'
+                  - $ref: '#/components/schemas/Message'
+                  - $ref: '#/components/schemas/Story'
+    put:
+      tags:
+        - story
+      operationId: update
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      tags:
+        - story
+      operationId: delete
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /event/{id}/comment/{timestamp}:
+    delete:
+      tags:
+        - story
+      operationId: deleteComment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: timestamp
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+  /state/{character}:
+    post:
+      tags:
+        - state
+      operationId: state
+      parameters:
+        - name: character
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: OK
+  /roll:
+    post:
+      tags:
+        - story
+      operationId: addRoll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RollDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+  /message:
+    post:
+      tags:
+        - story
+      operationId: addMessage_1
+      parameters:
+        - name: text
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: character
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: characters
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /image:
+    post:
+      tags:
+        - story
+      operationId: addImage
+      parameters:
+        - name: characters
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - file
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /gallery/convert:
+    post:
+      tags:
+        - gallery
+      operationId: convert
+      responses:
+        '200':
+          description: OK
+  /gallery/{page}:
+    get:
+      tags:
+        - gallery
+      operationId: read
+      parameters:
+        - name: page
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedEventsImage_Summary'
+  /event/{id}/comment:
+    post:
+      tags:
+        - event
+      operationId: comment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: text
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: characters
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /comment:
+    post:
+      tags:
+        - event
+      operationId: addComment_1
+      parameters:
+        - name: text
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: characters
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /base64image:
+    post:
+      tags:
+        - gallery
+      operationId: addBase64Image_1
+      parameters:
+        - name: data
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: characters
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /action:
+    post:
+      tags:
+        - story
+      operationId: addAction_1
+      parameters:
+        - name: text
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: character
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /action/{id}/reaction:
+    post:
+      tags:
+        - story
+      operationId: addReaction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: text
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: finished
+          in: query
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /story:
+    get:
+      tags:
+        - story
+      operationId: fullTimeline
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedEventsEvent_Summary'
+    post:
+      tags:
+        - story
+      operationId: addStory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /story/{page}:
+    get:
+      tags:
+        - story
+      operationId: pagedTimeline
+      parameters:
+        - name: page
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedEventsEvent_Summary'
+  /story/characters:
+    get:
+      tags:
+        - story
+        - characters
+      operationId: getCharacters
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /characters:
+    get:
+      tags:
+        - characters
+      operationId: list
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Character'
+    post:
+      tags:
+        - characters
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        '200':
+          description: OK
+  /characters/{character}:
+    get:
+      tags:
+        - characters
+      operationId: read_1
+      parameters:
+        - name: character
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+    put:
+      tags:
+        - characters
+      operationId: updateCharacter
+      parameters:
+        - name: character
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        '200':
+          description: OK
+    delete:
+      tags:
+        - characters
+      operationId: deleteCharacter
+      parameters:
+        - name: character
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: OK
+  /characters/{character}/avatar:
+    post:
+      tags:
+        - avatar
+      operationId: avatar
+      parameters:
+        - name: character
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+                type: string
+                format: binary
+      responses:
+        '200':
+          description: OK
+  /characters/{character}/rolls:
+    get:
+      tags:
+        - characters
+      operationId: rolls
+      parameters:
+        - name: character
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Roll'
+  /characters/me:
+    get:
+      tags:
+        - characters
+      operationId: me
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /campaign:
+    get:
+      tags:
+        - campaign
+      operationId: read_2
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+  /characters/{character}/rolls/{name}:
+    delete:
+      tags:
+        - characters
+      operationId: deleteRoll
+      parameters:
+        - name: character
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+  /action/{id}/item/{timestamp}:
+    delete:
+      tags:
+        - story
+      operationId: deleteActionItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: timestamp
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+  /campaign/{name}:
+    delete:
+      tags:
+        - campaign
+      operationId: delete_2
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+components:
+  schemas:
+    EventDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        text:
+          type: string
+        data:
+          type: string
+        character:
+          type: string
+        characters:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+    Roll:
+      type: object
+      properties:
+        name:
+          type: string
+        dice:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+        modifier:
+          type: integer
+          format: int32
+    RollDTO:
+      type: object
+      properties:
+        text:
+          type: string
+          writeOnly: true
+        dice:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+          writeOnly: true
+        modifier:
+          type: integer
+          format: int32
+          writeOnly: true
+        type:
+          type: string
+          enum:
+            - NORMAL
+            - DISADVANTAGE
+            - ADVANTAGE
+        character:
+          type: string
+        persist:
+          type: boolean
+        roll:
+          $ref: '#/components/schemas/Roll'
+    Action:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Event_Summary'
+        - type: object
+          properties:
+            character:
+              type: string
+            text:
+              type: array
+              items:
+                $ref: '#/components/schemas/Text'
+            rolls:
+              type: array
+              items:
+                $ref: '#/components/schemas/Roll'
+            finished:
+              type: boolean
+    Comment:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Event_Summary'
+        - type: object
+          properties:
+            text:
+              type: string
+            characters:
+              type: array
+              items:
+                type: string
+    EventComment_Summary:
+      type: object
+      properties:
+        text:
+          type: string
+        player:
+          type: string
+        created:
+          type: string
+          format: date-time
+    Event_Summary:
+      required:
+        - type
+      type: object
+      properties:
+        id:
+          type: string
+        player:
+          type: string
+        created:
+          type: string
+          format: date-time
+        updated:
+          type: string
+          format: date-time
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventComment_Summary'
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+    Image:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Event_Summary'
+        - type: object
+          properties:
+            data:
+              type: string
+            original:
+              type: string
+    Message:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Event_Summary'
+        - type: object
+          properties:
+            text:
+              type: string
+            character:
+              type: string
+            characters:
+              type: array
+              items:
+                type: string
+    PagedEventsEvent_Summary:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int64
+        data:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/Action'
+              - $ref: '#/components/schemas/Comment'
+              - $ref: '#/components/schemas/Image'
+              - $ref: '#/components/schemas/Message'
+              - $ref: '#/components/schemas/Story'
+    Story:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Event_Summary'
+        - type: object
+          properties:
+            text:
+              type: string
+            characters:
+              type: array
+              items:
+                type: string
+    Text:
+      type: object
+      properties:
+        text:
+          type: string
+        gameMaster:
+          type: boolean
+        timestamp:
+          type: string
+          format: date-time
+    Image_Summary:
+      type: object
+      properties:
+        id:
+          type: string
+        player:
+          type: string
+        created:
+          type: string
+          format: date-time
+        updated:
+          type: string
+          format: date-time
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventComment_Summary'
+        data:
+          type: string
+    PagedEventsImage_Summary:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int64
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image_Summary'
+    Character:
+      type: object
+      properties:
+        name:
+          type: string
+        initials:
+          type: string
+        xp:
+          type: integer
+          format: int32
+        players:
+          type: array
+          items:
+            type: string
+        inactive:
+          type: boolean
+        description:
+          type: string
+        avatar:
+          type: string
+        playingCharacter:
+          type: boolean
+    Campaign:
+      type: object
+      properties:
+        title:
+          type: string
+        characters:
+          type: array
+          items:
+            $ref: '#/components/schemas/Character'
+        events:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/Action'
+              - $ref: '#/components/schemas/Comment'
+              - $ref: '#/components/schemas/Image'
+              - $ref: '#/components/schemas/Message'
+              - $ref: '#/components/schemas/Story'
