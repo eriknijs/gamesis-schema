@@ -178,12 +178,9 @@ components:
     Invite:
       type: object
       required:
-        - code
         - email
         - expirationDate
       properties:
-        code:
-          type: string
         email:
           type: string
           format: email
