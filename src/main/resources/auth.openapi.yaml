@@ -103,16 +103,19 @@ paths:
     delete:
       description: >-
         Removes (and thus invalidates) the invite. Users who have received 
-        the invite can no longer register with the give code
+        the invite can no longer register with the given code.
+        All invites sent to the email address given in the path are revoked
       tags:
         - invites
       operationId: revoke
       parameters:
         - name: invite
+          description: represents the email address to which the invite was sent.
           in: path
           required: true
           schema:
             type: string
+            format: email
       responses:
         200:
           description: OK
