@@ -4,7 +4,7 @@
     
     <groupId>gamesis</groupId>
     <artifactId>gamesis.schemas</artifactId>
-    <version>1.0.2</version>
+    <version>1.2.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -105,13 +105,14 @@
                             <generateSupportingFiles>false</generateSupportingFiles>
                             <addTestCompileSourceRoot>true</addTestCompileSourceRoot>
                             <addCompileSourceRoot>false</addCompileSourceRoot>
+                            <skipOperationExample>true</skipOperationExample>
                             <configOptions>
                                 <sourceFolder>openapi</sourceFolder>
                                 <delegatePattern>true</delegatePattern>
                             </configOptions>
                         </configuration>
                     </execution>
-<!--                    <execution>
+                    <execution>
                         <id>generate story model</id>
                         <phase>process-resources</phase>
                         <goals>
@@ -126,12 +127,22 @@
                             <generateSupportingFiles>false</generateSupportingFiles>
                             <addTestCompileSourceRoot>true</addTestCompileSourceRoot>
                             <addCompileSourceRoot>false</addCompileSourceRoot>
+                            <skipOperationExample>true</skipOperationExample>
                             <configOptions>
                                 <sourceFolder>openapi</sourceFolder>
                                 <delegatePattern>true</delegatePattern>
+                                <!--<useSpringBoot3>true</useSpringBoot3>-->
                             </configOptions>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=Date</typeMapping>
+                                <!--<typeMapping>file=MultipartFile</typeMapping>-->
+                            </typeMappings>
+                            <importMappings>                                
+                                <importMapping>java.time.OffsetDateTime=java.util.Date</importMapping>
+                                <!--<importMapping>org.springframework.core.io.Resource=org.springframework.web.multipart.MultipartFile</importMapping>-->
+                            </importMappings>
                         </configuration>
-                    </execution>-->
+                    </execution>
                 </executions>
                 <dependencies>
                     <dependency>
